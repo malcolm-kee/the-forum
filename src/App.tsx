@@ -1,12 +1,9 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
 
-function App() {
+export function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div className="bg-teal-500 text-gray-100">
+      <header className="mx-auto max-w-lg">
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
@@ -22,5 +19,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
