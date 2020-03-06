@@ -5,6 +5,7 @@ export type Topic = {
   authorName: string;
   createdAt: Date;
   id: string;
+  commentCount?: number;
 };
 
 export type TopicComment = {

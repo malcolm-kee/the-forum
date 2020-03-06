@@ -97,7 +97,7 @@ export const useAuthUser = () => {
 
 export const useTopicsData = () => {
   const firebase = useFirebase();
-  const [topics, setTopics] = React.useState<Topic[]>([]);
+  const [topics, setTopics] = React.useState<Topic[] | null>(null);
 
   React.useEffect(() => {
     const unsub = firebase.db

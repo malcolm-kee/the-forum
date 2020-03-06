@@ -15,7 +15,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         {...props}
         className={cx(
-          'block m-0 w-full min-w-0 border border-gray-300 px-3 shadow-inner text-gray-900',
+          'block m-0 w-full min-w-0 border border-gray-300 px-3 py-1 shadow-inner text-gray-900 rounded-lg',
           className
         )}
         onChange={callAll(

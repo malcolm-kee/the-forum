@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../components/button';
-import { Dialog } from '../components/dialog';
 import { TextField } from '../components/text-field';
 import { useTopic, useAuthUser } from '../firebase';
+import { Spinner } from '../components/spinner';
 
 export const TopicPage = () => {
   const params = useParams<{ topicId: string }>();
@@ -17,7 +17,7 @@ export const TopicPage = () => {
         created by <strong>{topic.authorName}</strong> on{' '}
         {topic.createdAt.toLocaleString()}
       </p>
-      <div className="mb-6">{topic.description}</div>
+      <div className="mb-6 mt-3 text-lg">{topic.description}</div>
       {comments.length === 0 ? (
         <div>
           <p>There is no comment yet.</p>
@@ -37,49 +37,43 @@ export const TopicPage = () => {
           ))}
         </ul>
       )}
-      <div className="my-4 text-right">
+      <div className="my-4">
         <AddCommentButton onAddComment={addComment} />
       </div>
     </div>
-  ) : null;
+  ) : (
+    <div className="text-center p-12">
+      <Spinner />
+    </div>
+  );
 };
 
 const AddCommentButton = (props: {
   onAddComment: (content: string) => void;
 }) => {
   const user = useAuthUser();
-  const [dialogIsOpen, setDialogIsOpen] = React.useState(false);
   const [content, setContent] = React.useState('');
 
   return (
     user && (
-      <>
-        <Button onClick={() => setDialogIsOpen(true)}>Add Comment</Button>
-        <Dialog
-          aria-label="New Comment"
-          isOpen={dialogIsOpen}
-          onDismiss={() => setDialogIsOpen(false)}
-        >
-          <form
-            onSubmit={ev => {
-              ev.preventDefault();
-              props.onAddComment(content);
-              setDialogIsOpen(false);
-            }}
-          >
-            <TextField
-              label="Comment"
-              value={content}
-              onChangeValue={setContent}
-              required
-              autoFocus
-            />
-            <div>
-              <Button type="submit">Add</Button>
-            </div>
-          </form>
-        </Dialog>
-      </>
+      <form
+        onSubmit={ev => {
+          ev.preventDefault();
+          props.onAddComment(content);
+          setContent('');
+        }}
+        className="flex items-end"
+      >
+        <div className="flex-1 pr-1">
+          <TextField
+            label="Comment"
+            value={content}
+            onChangeValue={setContent}
+            required
+          />
+        </div>
+        <Button type="submit">Add</Button>
+      </form>
     )
   );
 };

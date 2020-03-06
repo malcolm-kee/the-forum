@@ -48,12 +48,11 @@ const AddTopicForm = (props: { onSubmit: () => void }) => {
     <form
       onSubmit={ev => {
         ev.preventDefault();
-        firebase
-          .addTopic({
-            title,
-            description,
-          })
-          .then(props.onSubmit);
+        firebase.addTopic({
+          title,
+          description,
+        });
+        props.onSubmit();
       }}
     >
       <legend>New Topic</legend>
