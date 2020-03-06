@@ -1,19 +1,24 @@
 import * as React from 'react';
-import { Signup } from './containers/signup';
+import { Route, Switch } from 'react-router-dom';
+import { Home } from './containers/home';
 import { Login } from './containers/login';
+import { Navbar } from './containers/navbar';
+import { NotFoundPage } from './containers/not-found-page';
+import { Signup } from './containers/signup';
+import * as routes from './routes';
 
 export function App() {
   return (
-    <div>
-      <header className="bg-teal-500 text-gray-100">
-        <div className="mx-auto max-w-lg">
-          <a href="/">The Forum</a>
-        </div>
-      </header>
+    <>
+      <Navbar />
       <main>
-        <Signup />
-        <Login />
+        <Switch>
+          <Route path={routes.signupUrl} component={Signup} />
+          <Route path={routes.loginUrl} component={Login} />
+          <Route path={routes.homeUrl} exact component={Home} />
+          <Route component={NotFoundPage} />
+        </Switch>
       </main>
-    </div>
+    </>
   );
 }
