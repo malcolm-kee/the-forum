@@ -7,6 +7,8 @@ import { useAuthUser, useFirebase } from '../firebase';
 import * as routes from '../routes';
 import { Recaptcha } from './recaptcha';
 
+type Step = 'input' | 'recaptcha';
+
 export const Signup = () => {
   const firebase = useFirebase();
   const user = useAuthUser();
@@ -15,7 +17,8 @@ export const Signup = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [pwRepeat, setPwRepeat] = React.useState('');
-  const [isVerified, setIsVerified] = React.useState(false);
+
+  const [step, setStep] = React.useState<Step>('input');
 
   const [errorMsg, setErrorMsg] = React.useState('');
 
@@ -26,25 +29,12 @@ export const Signup = () => {
         <StyledLink to={routes.homeUrl}>Home</StyledLink>
       </div>
     </div>
-  ) : (
+  ) : step === 'input' ? (
     <form
       onSubmit={ev => {
         ev.preventDefault();
         if (password === pwRepeat) {
-          firebase
-            .signUpWithEmail(email, password)
-            .then(({ user }) => {
-              if (user) {
-                return user.updateProfile({
-                  displayName,
-                });
-              }
-            })
-            .catch(err => {
-              if (err.message) {
-                setErrorMsg(err.message);
-              }
-            });
+          setStep('recaptcha');
         }
       }}
       className="px-3 py-5 max-w-md mx-auto"
@@ -74,6 +64,7 @@ export const Signup = () => {
         value={password}
         onChangeValue={setPassword}
         required
+        minLength={6}
       />
       <TextField
         label="Repeat Password"
@@ -81,12 +72,16 @@ export const Signup = () => {
         value={pwRepeat}
         onChangeValue={setPwRepeat}
         required
+        minLength={6}
+        helpText={
+          password !== pwRepeat
+            ? 'Passwords does not match'
+            : 'Passwords match!'
+        }
+        showHelpTextWhenFocus
       />
-      <div className="pt-3">
-        <Recaptcha onVerify={() => setIsVerified(true)} />
-      </div>
       <div className="py-3">
-        <Button type="submit" disabled={!isVerified} className="w-full">
+        <Button type="submit" className="w-full">
           Signup
         </Button>
       </div>
@@ -97,5 +92,27 @@ export const Signup = () => {
         </p>
       </div>
     </form>
+  ) : (
+    <div className="py-6 max-w-sm mx-auto">
+      <Recaptcha
+        onVerify={() => {
+          firebase
+            .signUpWithEmail(email, password)
+            .then(({ user }) => {
+              if (user) {
+                return user.updateProfile({
+                  displayName,
+                });
+              }
+            })
+            .catch(err => {
+              if (err.message) {
+                setStep('input');
+                setErrorMsg(err.message);
+              }
+            });
+        }}
+      />
+    </div>
   );
 };

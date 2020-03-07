@@ -23,7 +23,11 @@ export const TextareaField = React.forwardRef<
         aria-describedby={helpText ? `${displayedId}-help` : undefined}
         ref={ref}
       />
-      {helpText && <p id={`${displayedId}-help`}>{helpText}</p>}
+      {helpText && (
+        <p id={`${displayedId}-help`} className="pl-2">
+          <small>{helpText}</small>
+        </p>
+      )}
     </div>
   );
 });

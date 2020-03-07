@@ -30,11 +30,11 @@ export const MarkdownEditor = ({
         <TabPanel>
           <TextareaField
             helpText={
-              <small>
+              <>
                 Supports Whatsapp-like markdown, i.e.{' '}
                 <code>[link-text](link-url)</code>, <code>_italic_</code>, and{' '}
                 <code>*bold*</code>
-              </small>
+              </>
             }
             {...props}
           />
