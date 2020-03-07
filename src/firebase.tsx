@@ -39,6 +39,13 @@ export class Firebase {
     return this.auth.signInWithPopup(provider);
   };
 
+  updateProfile = (displayName: string) =>
+    this.auth.currentUser
+      ? this.auth.currentUser.updateProfile({
+          displayName,
+        })
+      : Promise.reject(new Error('User not logged in'));
+
   signOut = () => this.auth.signOut();
 
   addTopic = (topic: Pick<Topic, 'title' | 'description'>) => {
@@ -82,7 +89,9 @@ export const useFirebase = () => React.useContext(FirebaseContext) as Firebase;
 
 export const useAuthUser = () => {
   const firebase = useFirebase();
-  const [user, setUser] = React.useState<app.User | null>(null);
+  const [user, setUser] = React.useState<app.User | null>(
+    () => firebase.auth.currentUser
+  );
 
   React.useEffect(() => {
     if (firebase) {

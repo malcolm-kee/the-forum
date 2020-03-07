@@ -5,6 +5,7 @@ import { Home } from './containers/home';
 import { Login } from './containers/login';
 import { Navbar } from './containers/navbar';
 import { NotFoundPage } from './containers/not-found-page';
+import { ProfilePage } from './containers/profile-page';
 import { Signup } from './containers/signup';
 import { TopicPage } from './containers/topic-page';
 import * as routes from './routes';
@@ -17,6 +18,7 @@ export function App() {
         <Switch>
           <Route path={routes.signupUrl} component={Signup} />
           <Route path={routes.loginUrl} component={Login} />
+          <Route path={routes.profileUrl} component={ProfilePage} />
           <Route path={routes.topicUrl} component={TopicPage} />
           <Route path={routes.createTopicUrl} component={AddTopicPage} />
           <Route path={routes.homeUrl} exact component={Home} />
