@@ -5,6 +5,7 @@ import { StyledLink } from '../components/styled-link';
 import { TextField } from '../components/text-field';
 import { useAuthUser, useFirebase } from '../firebase';
 import * as routes from '../routes';
+import { Recaptcha } from './recaptcha';
 
 export const Signup = () => {
   const firebase = useFirebase();
@@ -14,6 +15,7 @@ export const Signup = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [pwRepeat, setPwRepeat] = React.useState('');
+  const [isVerified, setIsVerified] = React.useState(false);
 
   const [errorMsg, setErrorMsg] = React.useState('');
 
@@ -80,8 +82,11 @@ export const Signup = () => {
         onChangeValue={setPwRepeat}
         required
       />
+      <div className="pt-3">
+        <Recaptcha onVerify={() => setIsVerified(true)} />
+      </div>
       <div className="py-3">
-        <Button type="submit" className="w-full">
+        <Button type="submit" disabled={!isVerified} className="w-full">
           Signup
         </Button>
       </div>

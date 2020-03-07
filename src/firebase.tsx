@@ -17,12 +17,14 @@ const firebaseConfig = {
 export class Firebase {
   auth: app.auth.Auth;
   db: app.firestore.Firestore;
+  RecapchaVerifier: typeof app.auth.RecaptchaVerifier;
 
   constructor() {
     app.initializeApp(firebaseConfig);
 
     this.auth = app.auth();
     this.db = app.firestore();
+    this.RecapchaVerifier = app.auth.RecaptchaVerifier;
   }
 
   signUpWithEmail = (email: string, password: string) =>
