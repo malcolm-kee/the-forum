@@ -6,6 +6,9 @@
 .pnp.js
 .firebase
 
+# generated
+/src/css/main.css
+
 # testing
 /coverage
 
