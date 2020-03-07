@@ -76,7 +76,7 @@ export const Navbar = () => {
               </Button>
             </>
           ) : (
-            <LoginLink />
+            <LoginLink className="text-base inline-block px-4 py-2" />
           )}
         </nav>
       </div>
