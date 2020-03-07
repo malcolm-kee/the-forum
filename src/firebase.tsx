@@ -92,14 +92,12 @@ export const useFirebase = () => React.useContext(FirebaseContext) as Firebase;
 export const useAuthUser = () => {
   const firebase = useFirebase();
   const [user, setUser] = React.useState<app.User | null>(
-    () => firebase.auth.currentUser
+    firebase.auth.currentUser
   );
 
   React.useEffect(() => {
     if (firebase) {
-      const unsub = firebase.auth.onAuthStateChanged(setUser);
-
-      return unsub;
+      return firebase.auth.onAuthStateChanged(setUser);
     }
   }, [firebase]);
 
@@ -111,29 +109,29 @@ export const useTopicsData = (pageSize = 10) => {
   const [topics, setTopics] = React.useState<Topic[] | null>(null);
   const [limit, setLimit] = React.useState(pageSize);
 
-  React.useEffect(() => {
-    const unsub = firebase.db
-      .collection('topics')
-      .orderBy('createdAt', 'desc')
-      .limit(limit)
-      .onSnapshot(snapshots => {
-        const topicData: Topic[] = [];
-        snapshots.forEach(doc => {
-          const data = doc.data();
-          if (data) {
-            topicData.push({
-              ...data,
-              createdAt: data.createdAt && data.createdAt.toDate(),
-              id: doc.id,
-            } as Topic);
-          }
-        });
+  React.useEffect(
+    () =>
+      firebase.db
+        .collection('topics')
+        .orderBy('createdAt', 'desc')
+        .limit(limit)
+        .onSnapshot(snapshots => {
+          const topicData: Topic[] = [];
+          snapshots.forEach(doc => {
+            const data = doc.data();
+            if (data) {
+              topicData.push({
+                ...data,
+                createdAt: data.createdAt && data.createdAt.toDate(),
+                id: doc.id,
+              } as Topic);
+            }
+          });
 
-        setTopics(topicData);
-      });
-
-    return unsub;
-  }, [firebase, limit]);
+          setTopics(topicData);
+        }),
+    [firebase, limit]
+  );
 
   const loadMore = React.useCallback(() => {
     setLimit(prevLimit => prevLimit + pageSize);
@@ -153,7 +151,7 @@ export const useTopic = (topicId: string) => {
   React.useEffect(() => {
     const topicDb = firebase.db.collection('topics').doc(topicId);
 
-    const unsub = topicDb.onSnapshot(snapshot => {
+    const unsubTopicChange = topicDb.onSnapshot(snapshot => {
       const data = snapshot.data();
 
       if (data) {
@@ -165,7 +163,7 @@ export const useTopic = (topicId: string) => {
       }
     });
 
-    const unsubComments = topicDb
+    const unsubCommentsChange = topicDb
       .collection('comments')
       .orderBy('createdAt', 'asc')
       .onSnapshot(snapshots => {
@@ -187,8 +185,8 @@ export const useTopic = (topicId: string) => {
       });
 
     return () => {
-      unsub();
-      unsubComments();
+      unsubTopicChange();
+      unsubCommentsChange();
     };
   }, [topicId, firebase]);
 

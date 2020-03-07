@@ -27,6 +27,7 @@
     "start": "npm run build:css && react-scripts start",
     "build": "npm run build:css && react-scripts build",
     "test": "react-scripts test",
+    "test:coverage": "react-scripts test --ci --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "build:css": "postcss src/css/tailwind.css -o src/css/main.css"
   },
