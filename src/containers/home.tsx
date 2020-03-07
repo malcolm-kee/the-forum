@@ -1,76 +1,56 @@
 import * as React from 'react';
+import { MdAddCircle } from 'react-icons/md';
 import { Button } from '../components/button';
 import { Dialog } from '../components/dialog';
-import { TextField } from '../components/text-field';
-import { useFirebase, useAuthUser } from '../firebase';
+import { useAuthUser } from '../firebase';
+import { AddTopicForm } from './add-topic-form';
 import { TopicList } from './topic-list';
+import { LoginLink } from '../components/login-link';
 
 export const Home = () => {
+  const user = useAuthUser();
   return (
-    <div className="max-w-6xl mx-auto px-3 py-4">
+    <div className="max-w-3xl mx-auto px-3 py-4">
       <h1 className="py-4">
-        <div className="text-lg">Welcome to</div>
-        <div className="text-6xl font-serif leading-none">The Forum</div>
+        <div className="text-lg text-gray-700">Welcome to</div>
+        <div className="text-5xl md:text-6xl font-serif leading-none">
+          The Forum
+        </div>
       </h1>
-      <div className="hidden md:block">
-        <AddTopicButton />
-      </div>
+      {user && (
+        <div className="hidden md:block">
+          <AddTopicButton />
+        </div>
+      )}
       <TopicList />
+      {!user && (
+        <p>
+          <LoginLink className="text-teal-700" /> to add topic.
+        </p>
+      )}
     </div>
   );
 };
 
 const AddTopicButton = () => {
-  const user = useAuthUser();
   const [showDialog, setShowDialog] = React.useState(false);
   return (
-    user && (
-      <>
-        <Button onClick={() => setShowDialog(true)}>New Topic</Button>
-        <Dialog
-          aria-label="New Topic Details"
-          isOpen={showDialog}
-          onDismiss={() => setShowDialog(false)}
-        >
-          <AddTopicForm onSubmit={() => setShowDialog(false)} />
-        </Dialog>
-      </>
-    )
-  );
-};
-
-const AddTopicForm = (props: { onSubmit: () => void }) => {
-  const firebase = useFirebase();
-  const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
-
-  return (
-    <form
-      onSubmit={ev => {
-        ev.preventDefault();
-        firebase.addTopic({
-          title,
-          description,
-        });
-        props.onSubmit();
-      }}
-    >
-      <legend>New Topic</legend>
-      <TextField
-        label="Title"
-        value={title}
-        onChangeValue={setTitle}
-        required
-      />
-      <TextField
-        label="Description"
-        value={description}
-        onChangeValue={setDescription}
-        required
-      />
-      <div className="py-3">
-        <Button type="submit">Add</Button>
-      </div>
-    </form>
+    <>
+      <Button onClick={() => setShowDialog(true)}>
+        <MdAddCircle
+          className="inline-block mr-2"
+          focusable={false}
+          aria-hidden
+        />{' '}
+        New Topic
+      </Button>
+      <Dialog
+        aria-label="New Topic Details"
+        isOpen={showDialog}
+        onDismiss={() => setShowDialog(false)}
+      >
+        <AddTopicForm onSubmit={() => setShowDialog(false)} />
+      </Dialog>
+    </>
   );
 };

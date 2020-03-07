@@ -95,14 +95,16 @@ export const useAuthUser = () => {
   return user;
 };
 
-export const useTopicsData = () => {
+export const useTopicsData = (pageSize = 10) => {
   const firebase = useFirebase();
   const [topics, setTopics] = React.useState<Topic[] | null>(null);
+  const [limit, setLimit] = React.useState(pageSize);
 
   React.useEffect(() => {
     const unsub = firebase.db
       .collection('topics')
       .orderBy('createdAt', 'desc')
+      .limit(limit)
       .onSnapshot(snapshots => {
         const topicData: Topic[] = [];
         snapshots.forEach(doc => {
@@ -120,9 +122,16 @@ export const useTopicsData = () => {
       });
 
     return unsub;
-  }, [firebase]);
+  }, [firebase, limit]);
 
-  return topics;
+  const loadMore = React.useCallback(() => {
+    setLimit(prevLimit => prevLimit + pageSize);
+  }, [pageSize]);
+
+  return [
+    topics,
+    { loadMore, hasMore: !!topics && topics.length === limit },
+  ] as const;
 };
 
 export const useTopic = (topicId: string) => {

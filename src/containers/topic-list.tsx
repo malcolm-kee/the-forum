@@ -3,33 +3,52 @@ import { useTopicsData } from '../firebase';
 import { Link } from 'react-router-dom';
 import { pluralize } from '../lib/pluralize';
 import { Spinner } from '../components/spinner';
+import { Button } from '../components/button';
 
 export const TopicList = () => {
-  const topics = useTopicsData();
+  const [topics, { loadMore, hasMore }] = useTopicsData();
 
   return (
     <div className="py-4">
       {topics ? (
-        <ul>
-          {topics.map(topic => (
-            <li className="shadow mb-2" key={topic.id}>
-              <Link className="block p-2" to={`/topic/${topic.id}`}>
-                <div>
-                  <span className="text-lg">{topic.title}</span>
+        <>
+          <ul>
+            {topics.map(topic => (
+              <li className="shadow mb-2" key={topic.id}>
+                <Link className="block px-4 py-2" to={`/topic/${topic.id}`}>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-lg">{topic.title}</span>
+                    </div>
+                    <div>
+                      <small>
+                        {topic.createdAt && topic.createdAt.toLocaleString()}
+                      </small>
+                    </div>
+                  </div>
+                  <div className="leading-none mb-1">
+                    <small>by {topic.authorName}</small>
+                  </div>
                   {topic.commentCount ? (
-                    <span className="bg-teal-200 px-2 mx-2 text-sm rounded">
-                      {topic.commentCount}{' '}
-                      {pluralize('comment', 'comments', topic.commentCount)}
-                    </span>
+                    <div>
+                      <span className="bg-teal-200 px-2 text-sm rounded">
+                        {topic.commentCount}{' '}
+                        {pluralize('comment', 'comments', topic.commentCount)}
+                      </span>
+                    </div>
                   ) : null}
-                </div>
-                <div>
-                  <small>{topic.description}</small>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {hasMore && (
+            <div>
+              <Button onClick={loadMore} variant="none" className="w-full">
+                Load More
+              </Button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="py-12 text-center">
           <Spinner />

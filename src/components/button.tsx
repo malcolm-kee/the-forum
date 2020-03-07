@@ -14,7 +14,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         type={type}
         className={cx(
-          'inline-block rounded px-4 py-2',
+          'inline-flex items-center justify-center rounded px-4 py-2',
           disabled
             ? 'bg-gray-500 text-gray-100 cursor-not-allowed'
             : variant === 'primary'

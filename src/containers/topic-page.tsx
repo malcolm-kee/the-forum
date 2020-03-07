@@ -4,6 +4,7 @@ import { Button } from '../components/button';
 import { TextField } from '../components/text-field';
 import { useTopic, useAuthUser } from '../firebase';
 import { Spinner } from '../components/spinner';
+import { LoginLink } from '../components/login-link';
 
 export const TopicPage = () => {
   const params = useParams<{ topicId: string }>();
@@ -15,7 +16,7 @@ export const TopicPage = () => {
       <h1 className="text-4xl">{topic.title}</h1>
       <p>
         created by <strong>{topic.authorName}</strong> on{' '}
-        {topic.createdAt.toLocaleString()}
+        {topic.createdAt && topic.createdAt.toLocaleString()}
       </p>
       <div className="mb-6 mt-3 text-lg">{topic.description}</div>
       {comments.length === 0 ? (
@@ -38,7 +39,7 @@ export const TopicPage = () => {
         </ul>
       )}
       <div className="my-4">
-        <AddCommentButton onAddComment={addComment} />
+        <AddCommentInput onAddComment={addComment} />
       </div>
     </div>
   ) : (
@@ -48,32 +49,38 @@ export const TopicPage = () => {
   );
 };
 
-const AddCommentButton = (props: {
+const AddCommentInput = (props: {
   onAddComment: (content: string) => void;
 }) => {
   const user = useAuthUser();
   const [content, setContent] = React.useState('');
 
-  return (
-    user && (
-      <form
-        onSubmit={ev => {
-          ev.preventDefault();
-          props.onAddComment(content);
-          setContent('');
-        }}
-        className="flex items-end"
-      >
-        <div className="flex-1 pr-1">
-          <TextField
-            label="Comment"
-            value={content}
-            onChangeValue={setContent}
-            required
-          />
-        </div>
-        <Button type="submit">Add</Button>
-      </form>
-    )
+  return user ? (
+    <form
+      onSubmit={ev => {
+        ev.preventDefault();
+        props.onAddComment(content);
+        setContent('');
+      }}
+      className="flex items-end"
+    >
+      <div className="flex-1 pr-1">
+        {/* TODO: switch to Textarea */}
+        <TextField
+          label="Comment"
+          value={content}
+          onChangeValue={setContent}
+          placeholder="Your comment"
+          required
+        />
+      </div>
+      <Button type="submit">Add</Button>
+    </form>
+  ) : (
+    <div>
+      <p>
+        <LoginLink className="text-teal-700" /> to add comment.
+      </p>
+    </div>
   );
 };
