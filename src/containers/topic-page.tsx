@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../components/button';
-import { TextField } from '../components/text-field';
-import { useTopic, useAuthUser } from '../firebase';
-import { Spinner } from '../components/spinner';
 import { LoginLink } from '../components/login-link';
+import { MarkdownDisplay } from '../components/markdown-display';
+import { EditorTab, MarkdownEditor } from '../components/markdown-editor';
+import { Spinner } from '../components/spinner';
+import { useAuthUser, useTopic } from '../firebase';
 
 export const TopicPage = () => {
   const params = useParams<{ topicId: string }>();
@@ -18,7 +19,9 @@ export const TopicPage = () => {
         created by <strong>{topic.authorName}</strong> on{' '}
         {topic.createdAt && topic.createdAt.toLocaleString()}
       </p>
-      <div className="mb-6 mt-3 text-lg">{topic.description}</div>
+      <div className="mb-6 mt-3 text-lg">
+        <MarkdownDisplay markdown={topic.description} />
+      </div>
       {comments.length === 0 ? (
         <div>
           <p>There is no comment yet.</p>
@@ -33,7 +36,9 @@ export const TopicPage = () => {
                   {comment.createdAt && comment.createdAt.toLocaleString()}
                 </small>
               </div>
-              <div className="px-2 py-1">{comment.content}</div>
+              <div className="px-2 py-1">
+                <MarkdownDisplay markdown={comment.content} />
+              </div>
             </li>
           ))}
         </ul>
@@ -54,6 +59,7 @@ const AddCommentInput = (props: {
 }) => {
   const user = useAuthUser();
   const [content, setContent] = React.useState('');
+  const [editorTab, setEditorTab] = React.useState<EditorTab>('edit');
 
   return user ? (
     <form
@@ -61,16 +67,18 @@ const AddCommentInput = (props: {
         ev.preventDefault();
         props.onAddComment(content);
         setContent('');
+        setEditorTab('edit');
       }}
-      className="flex items-end"
+      className="flex items-start"
     >
       <div className="flex-1 pr-1">
-        {/* TODO: switch to Textarea */}
-        <TextField
-          label="Comment"
+        <MarkdownEditor
           value={content}
           onChangeValue={setContent}
+          activeTab={editorTab}
+          onTabChange={setEditorTab}
           placeholder="Your comment"
+          aria-label="Comment"
           required
         />
       </div>

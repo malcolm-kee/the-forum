@@ -62,10 +62,15 @@ export const Navbar = () => {
           <span className="sr-only">New Topic</span>
           <MdNoteAdd aria-hidden focusable={false} size={24} />
         </LinkWithState>
-        <nav className="hidden sm:block">
+        <nav className="hidden sm:flex items-center">
           {user ? (
             <>
-              <Link to={routes.profileUrl}>Profile</Link>
+              <Link
+                to={routes.profileUrl}
+                className="text-base inline-block px-4 py-2"
+              >
+                Profile
+              </Link>
               <Button variant="none" onClick={() => firebase.signOut()}>
                 Logout
               </Button>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button } from '../components/button';
+import { EditorTab, MarkdownEditor } from '../components/markdown-editor';
 import { TextField } from '../components/text-field';
 import { useFirebase } from '../firebase';
 
@@ -7,6 +8,7 @@ export const AddTopicForm = (props: { onSubmit: () => void }) => {
   const firebase = useFirebase();
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
+  const [editorTab, setEditorTab] = React.useState<EditorTab>('edit');
 
   return (
     <form
@@ -17,6 +19,7 @@ export const AddTopicForm = (props: { onSubmit: () => void }) => {
           description,
         });
         props.onSubmit();
+        setEditorTab('edit');
       }}
     >
       <legend className="text-2xl">New Topic</legend>
@@ -27,13 +30,16 @@ export const AddTopicForm = (props: { onSubmit: () => void }) => {
         required
         autoFocus
       />
-      {/* TODO: switch to Textarea */}
-      <TextField
-        label="Description"
-        value={description}
-        onChangeValue={setDescription}
-        required
-      />
+      <div className="pt-3">
+        <MarkdownEditor
+          activeTab={editorTab}
+          onTabChange={setEditorTab}
+          value={description}
+          onChangeValue={setDescription}
+          aria-label="Description"
+          required
+        />
+      </div>
       <div className="py-3 text-right">
         <Button className="px-8" type="submit">
           Add
